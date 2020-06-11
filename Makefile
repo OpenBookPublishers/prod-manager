@@ -7,15 +7,13 @@ build = $(foreach sw,$(software), build-$(sw))
 run = $(foreach sw,$(software), run-$(sw))
 
 
-clone-all:
-	make $(clone)
-
-build-all:
-	make $(build)
-
 run-all:
 	make $(run)
 
+install:
+	mkdir -p input output
+	make $(clone)
+	make $(build)
 
 # Epublius
 clone-epublius:
@@ -71,8 +69,5 @@ run-obp-gen-toc:
 		   openbookpublishers/obp-gen-toc
 
 # Utils
-setup:
-	mkdir -p input output
-
 clean:
 	rm -rf ./input/* ./output/*

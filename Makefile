@@ -23,7 +23,7 @@ build-epublius:
 	docker build `pwd`/epublius/ \
 		     -t openbookpublishers/epublius
 
-run-epublius:
+run-epublius: ./input/file.epub ./input/file.json
 	docker run --rm \
 		   --user `id -u`:`id -g` \
 		   -v `pwd`/input/file.epub:/ebook_automation/epub_file.epub \
@@ -41,7 +41,7 @@ build-chapter-splitter:
 	docker build `pwd`/chapter-splitter/ \
 		     -t openbookpublishers/chapter-splitter
 
-run-chapter-splitter:
+run-chapter-splitter:  ./input/file.pdf ./input/file.json
 	docker run --rm \
 		   --user `id -u`:`id -g` \
 		   -v `pwd`/input/file.pdf:/ebook_automation/pdf_file.pdf \
@@ -58,7 +58,7 @@ build-obp-gen-toc:
 	docker build `pwd`/obp-gen-toc/ \
 		     -t openbookpublishers/obp-gen-toc
 
-run-obp-gen-toc:	
+run-obp-gen-toc:  ./input/file.xml ./input/file.pdf
 	docker run --rm \
 		   --user `id -u`:`id -g` \
 		   -v `pwd`/input/file.xml:/ebook_automation/file.xml \

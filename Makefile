@@ -1,5 +1,5 @@
 # Software list
-software = epublius chapter-splitter obp-gen-toc
+software = epublius chapter-splitter obp-gen-toc obp-gen-mobi
 
 # Actions lists (clone repository, build docker image, run container)
 clone = $(foreach sw,$(software), clone-$(sw))
@@ -57,6 +57,7 @@ run-chapter-splitter: ./output/chapter-splitter
 		   -v `pwd`/output/chapter-splitter:/ebook_automation/output \
 		   openbookpublishers/chapter-splitter
 
+
 # OBP Gen TOC
 clone-obp-gen-toc:
 	rm -rf ./obp-gen-toc
@@ -77,6 +78,27 @@ run-obp-gen-toc: ./output/obp-gen-toc
 		   -v `pwd`/output/obp-gen-toc:/ebook_automation/output \
 		   -e TOC_LEVEL=2 \
 		   openbookpublishers/obp-gen-toc
+
+
+# OBP Gen mobi
+clone-obp-gen-mobi:
+	rm -rf ./obp-gen-mobi
+	git clone --depth=1 https://github.com/OpenBookPublishers/obp-gen-mobi.git
+
+build-obp-gen-mobi:
+	docker build `pwd`/obp-gen-mobi/ \
+		     -t openbookpublishers/obp-gen-mobi
+
+run-obp-gen-mobi: ./output/obp-gen-mobi
+
+./output/obp-gen-mobi: ./input/file.epub
+	mkdir $@
+	docker run --rm \
+		   --user `id -u`:`id -g` \
+		   -v `pwd`/input/file.epub:/ebook_automation/epub_file.epub \
+		   -v `pwd`/output/obp-gen-mobi:/ebook_automation/output \
+		   openbookpublishers/obp-gen-mobi
+
 
 # Utils
 clean:

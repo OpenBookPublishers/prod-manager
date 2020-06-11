@@ -7,6 +7,9 @@ build = $(foreach sw,$(software), build-$(sw))
 run = $(foreach sw,$(software), run-$(sw))
 
 
+.PHONY: run-all install $(clone) $(build) $(run) clean
+
+
 run-all: $(run)
 	echo "Done"
 

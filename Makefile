@@ -10,8 +10,7 @@ run = $(foreach sw,$(software), run-$(sw))
 .PHONY: run-all install $(clone) $(build) $(run) clean
 
 
-run-all: $(run)
-	echo "Done"
+all: $(run)
 
 install: $(clone) $(build)
 	mkdir -p input output
@@ -29,7 +28,7 @@ build-epublius:
 run-epublius: ./output/epublius
 
 ./output/epublius: ./input/file.epub ./input/file.json
-	mkdir ./output/epublius
+	mkdir $@
 	docker run --rm \
 		   --user `id -u`:`id -g` \
 		   -v `pwd`/input/file.epub:/ebook_automation/epub_file.epub \
@@ -50,7 +49,7 @@ build-chapter-splitter:
 run-chapter-splitter: ./output/chapter-splitter
 
 ./output/chapter-splitter: ./input/file.pdf ./input/file.json
-	mkdir ./output/chapter-splitter
+	mkdir $@
 	docker run --rm \
 		   --user `id -u`:`id -g` \
 		   -v `pwd`/input/file.pdf:/ebook_automation/pdf_file.pdf \
@@ -70,7 +69,7 @@ build-obp-gen-toc:
 run-obp-gen-toc: ./output/obp-gen-toc
 
 ./output/obp-gen-toc: ./input/file.xml ./input/file.pdf
-	mkdir ./output/obp-gen-toc
+	mkdir $@
 	docker run --rm \
 		   --user `id -u`:`id -g` \
 		   -v `pwd`/input/file.xml:/ebook_automation/file.xml \

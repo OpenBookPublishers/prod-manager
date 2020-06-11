@@ -26,12 +26,15 @@ build-epublius:
 	docker build `pwd`/epublius/ \
 		     -t openbookpublishers/epublius
 
-run-epublius: ./input/file.epub ./input/file.json
+run-epublius: ./output/epublius
+
+./output/epublius: ./input/file.epub ./input/file.json
+	mkdir ./output/epublius
 	docker run --rm \
 		   --user `id -u`:`id -g` \
 		   -v `pwd`/input/file.epub:/ebook_automation/epub_file.epub \
 		   -v `pwd`/input/file.json:/ebook_automation/epub_file.json \
-		   -v `pwd`/output:/ebook_automation/output \
+		   -v `pwd`/output/epublius:/ebook_automation/output \
 		   openbookpublishers/epublius
 
 
@@ -44,12 +47,15 @@ build-chapter-splitter:
 	docker build `pwd`/chapter-splitter/ \
 		     -t openbookpublishers/chapter-splitter
 
-run-chapter-splitter:  ./input/file.pdf ./input/file.json
+run-chapter-splitter: ./output/chapter-splitter
+
+./output/chapter-splitter: ./input/file.pdf ./input/file.json
+	mkdir ./output/chapter-splitter
 	docker run --rm \
 		   --user `id -u`:`id -g` \
 		   -v `pwd`/input/file.pdf:/ebook_automation/pdf_file.pdf \
 		   -v `pwd`/input/file.json:/ebook_automation/pdf_file.json \
-		   -v `pwd`/output:/ebook_automation/output \
+		   -v `pwd`/output/chapter-splitter:/ebook_automation/output \
 		   openbookpublishers/chapter-splitter
 
 # OBP Gen TOC
@@ -61,12 +67,15 @@ build-obp-gen-toc:
 	docker build `pwd`/obp-gen-toc/ \
 		     -t openbookpublishers/obp-gen-toc
 
-run-obp-gen-toc:  ./input/file.xml ./input/file.pdf
+run-obp-gen-toc: ./output/obp-gen-toc
+
+./output/obp-gen-toc: ./input/file.xml ./input/file.pdf
+	mkdir ./output/obp-gen-toc
 	docker run --rm \
 		   --user `id -u`:`id -g` \
 		   -v `pwd`/input/file.xml:/ebook_automation/file.xml \
 		   -v `pwd`/input/file.pdf:/ebook_automation/file.pdf \
-		   -v `pwd`/output:/ebook_automation/output \
+		   -v `pwd`/output/obp-gen-toc:/ebook_automation/output \
 		   -e TOC_LEVEL=2 \
 		   openbookpublishers/obp-gen-toc
 

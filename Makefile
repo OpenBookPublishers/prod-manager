@@ -7,13 +7,12 @@ build = $(foreach sw,$(software), build-$(sw))
 run = $(foreach sw,$(software), run-$(sw))
 
 
-run-all:
-	make $(run)
+run-all: $(run)
+	echo "Done"
 
-install:
+install: $(clone) $(build)
 	mkdir -p input output
-	make $(clone)
-	make $(build)
+
 
 # Epublius
 clone-epublius:

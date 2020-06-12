@@ -1,6 +1,6 @@
 # Software list
 software = epublius chapter-splitter obp-gen-toc obp-gen-mobi \
-           XML-last obp-extract-cit
+           obp-gen-xml obp-extract-cit
 
 # Actions lists (clone repository, build docker image, run container)
 clone = $(foreach sw,$(software), clone-$(sw))
@@ -101,25 +101,25 @@ run-obp-gen-mobi: ./output/obp-gen-mobi
 		   openbookpublishers/obp-gen-mobi
 
 
-# XML last
-clone-XML-last:
-	rm -rf ./XML-last
-	git clone --depth=1 https://github.com/OpenBookPublishers/XML-last.git
+# obp-gen-xml
+clone-obp-gen-xml:
+	rm -rf ./obp-gen-xml
+	git clone --depth=1 https://github.com/OpenBookPublishers/obp-gen-xml.git
 
-build-XML-last:
-	docker build `pwd`/XML-last/ \
-		     -t openbookpublishers/xml-last
+build-obp-gen-xml:
+	docker build `pwd`/obp-gen-xml/ \
+		     -t openbookpublishers/obp-gen-xml
 
-run-XML-last: ./output/XML-last
+run-obp-gen-xml: ./output/obp-gen-xml
 
-./output/XML-last: ./input/file.epub ./input/file.xml
+./output/obp-gen-xml: ./input/file.epub ./input/file.xml
 	mkdir $@
 	docker run --rm \
 		   --user `id -u`:`id -g` \
 		   -v `pwd`/input/file.epub:/ebook_automation/epub_file.epub \
-		   -v `pwd`/input/file.xml:/ebook_automation/doi-deposit.xml \
-		   -v `pwd`/output/XML-last:/ebook_automation/output \
-		   openbookpublishers/xml-last
+		   -v `pwd`/input/file.xml:/ebook_automation/epub_file.xml \
+		   -v `pwd`/output/obp-gen-xml:/ebook_automation/output \
+		   openbookpublishers/obp-gen-xml
 
 
 # obp-extract-cit
@@ -131,16 +131,17 @@ build-obp-extract-cit:
 	docker build `pwd`/obp-extract-cit/ \
 		     -t openbookpublishers/obp-extract-cit
 
-run-XML-last: ./output/obp-extract-cit
+run-obp-extract-cit: ./output/obp-extract-cit
 
-./output/obp-extract-cit: ./output/XML-last/file.xml.zip ./input/file.xml
+./output/obp-extract-cit: ./output/obp-gen-xml/epub_file.xml.zip ./input/file.xml
 	mkdir $@
 	docker run --rm \
 		   --user `id -u`:`id -g` \
-		   -v `pwd`/output/XML-last/file.xml.zip:/ebook_automation/file.xml.zip \
+		   -v `pwd`/output/obp-gen-xml/epub_file.xml.zip:/ebook_automation/file.xml.zip \
 		   -v `pwd`/input/file.xml:/ebook_automation/file.xml \
 		   -v `pwd`/output/obp-extract-cit:/ebook_automation/output \
 		   openbookpublishers/obp-extract-cit
+
 
 # Utils
 clean:

@@ -1,5 +1,6 @@
 # Software list
-software = epublius chapter-splitter obp-gen-toc obp-gen-mobi XML-last
+software = epublius chapter-splitter obp-gen-toc obp-gen-mobi \
+           XML-last obp-extract-cit
 
 # Actions lists (clone repository, build docker image, run container)
 clone = $(foreach sw,$(software), clone-$(sw))
@@ -120,6 +121,26 @@ run-XML-last: ./output/XML-last
 		   -v `pwd`/output/XML-last:/ebook_automation/output \
 		   openbookpublishers/xml-last
 
+
+# obp-extract-cit
+clone-obp-extract-cit:
+	rm -rf ./obp-extract-cit
+	git clone --depth=1 https://github.com/OpenBookPublishers/obp-extract-cit.git
+
+build-obp-extract-cit:
+	docker build `pwd`/obp-extract-cit/ \
+		     -t openbookpublishers/obp-extract-cit
+
+run-XML-last: ./output/obp-extract-cit
+
+./output/obp-extract-cit: ./output/XML-last/file.xml.zip ./input/file.xml
+	mkdir $@
+	docker run --rm \
+		   --user `id -u`:`id -g` \
+		   -v `pwd`/output/XML-last/file.xml.zip:/ebook_automation/file.xml.zip \
+		   -v `pwd`/input/file.xml:/ebook_automation/file.xml \
+		   -v `pwd`/output/obp-extract-cit:/ebook_automation/output \
+		   openbookpublishers/obp-extract-cit
 
 # Utils
 clean:

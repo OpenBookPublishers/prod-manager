@@ -1,6 +1,6 @@
 # Software list
 software = epublius chapter-splitter obp-gen-toc obp-gen-mobi \
-           obp-gen-xml obp-extract-cit
+           obp-gen-xml obp-extract-cit ace-docker
 
 # Actions lists (clone repository, build docker image, run container)
 clone = $(foreach sw,$(software), clone-$(sw))
@@ -141,6 +141,27 @@ run-obp-extract-cit: ./output/obp-extract-cit
 		   -v `pwd`/input/file.xml:/ebook_automation/file.xml \
 		   -v `pwd`/output/obp-extract-cit:/ebook_automation/output \
 		   openbookpublishers/obp-extract-cit
+
+
+# ace-docker
+clone-ace-docker:
+	rm -rf ./ace-docker
+	git clone -b chown-output https://github.com/OpenBookPublishers/ace-docker.git
+
+build-ace-docker:
+	docker build `pwd`/ace-docker/ \
+		     -t openbookpublishers/ace-docker
+
+run-ace-docker: ./output/ace-docker
+
+./output/ace-docker: ./input/file.epub
+	mkdir $@
+	docker run --rm \
+                   -v `pwd`/input/file.epub:/ebook/file.epub \
+                   -v `pwd`/output/ace-docker:/ebook/output \
+                   -e UID=`id -u` \
+                   -e GID=`id -g` \
+                   openbookpublishers/ace-docker
 
 
 # Utils

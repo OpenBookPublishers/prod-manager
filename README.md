@@ -21,6 +21,11 @@ $ `make`
 
 Output files are stored in the `./output/` folder.
 
+## Run PDF flow
+Publications which come out with PDF only can be processed with the command:
+
+$ `make pdf-flow`
+
 # Advanced use
 Actions in the _makefile_ are purposely made very granular to allow the user some advanced tasks. Actions are named with this logic:
  -  a prefix named after one of the three main purposes of the software, namely `clone-`, `build-` and `run-`;

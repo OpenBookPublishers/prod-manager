@@ -1,17 +1,22 @@
 # Software list
-software = epublius chapter-splitter obp-gen-toc obp-gen-mobi \
-           obp-gen-xml obp-extract-cit ace-docker
+pdf-flow = chapter-splitter obp-gen-toc
+misc-flow = ace-docker epublius obp-gen-mobi obp-gen-xml obp-extract-cit
+
+software = $(pdf-flow) $(misc-flow)
 
 # Actions lists (clone repository, build docker image, run container)
 clone = $(foreach sw,$(software), clone-$(sw))
 build = $(foreach sw,$(software), build-$(sw))
-run = $(foreach sw,$(software), run-$(sw))
+
+run-pdf-flow = $(foreach sw,$(pdf-flow), run-$(sw))
+run-misc-flow = $(foreach sw,$(misc-flow), run-$(sw))
+
+.PHONY: all pdf-flow install $(clone) $(build) $(run) clean
 
 
-.PHONY: all install $(clone) $(build) $(run) clean
+all: $(run-pdf-flow) $(run-misc-flow)
 
-
-all: $(run)
+pdf-flow: $(run-pdf-flow)
 
 install: $(clone) $(build)
 	mkdir -p input output

@@ -15,6 +15,13 @@ $ `make install`
 This command initialises the input and output folders where to place input files and retrieve output files. After this, git repos are cloned and docker images are created.
 
 # Run
+`prod-manager` is able to handle two types of workflows:
+
+ 1. A generic workflow (suitable for most of OBP projects);
+ 2. A _PDF flow_ (designed for the projects which come out only as print and PDF editions).
+ 
+## Run the generic workflow
+
 Place the digital editions files in the input directory, named as: _file.epub_, _file.pdf_, _file.xml_, _file.json_. Then, run by typing:
 
 $ `make`
@@ -22,7 +29,7 @@ $ `make`
 Output files are stored in the `./output/` folder.
 
 ## Run PDF flow
-Publications which come out with PDF only can be processed with the command:
+Place the digital editions files in the input directory, named as: _file.pdf_ and _file.json_. Then, run by typing:
 
 $ `make pdf-flow`
 

@@ -40,6 +40,7 @@ run-epublius: ./output/epublius
 		   -v `pwd`/input/file.epub:/ebook_automation/epub_file.epub \
 		   -v `pwd`/input/file.json:/ebook_automation/epub_file.json \
 		   -v `pwd`/output/epublius:/ebook_automation/output \
+		   -e MATHJAX=False \
 		   openbookpublishers/epublius
 
 

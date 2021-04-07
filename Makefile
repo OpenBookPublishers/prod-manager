@@ -1,8 +1,9 @@
 # Software list
-pdf-flow = chapter-splitter obp-gen-toc archive_urls_pdf
+pdf-flow = chapter-splitter obp-gen-toc
 misc-flow = ace-docker epublius obp-gen-mobi obp-gen-xml obp-extract-cit
+post-flow = archive_urls_pdf
 
-software = $(pdf-flow) $(misc-flow)
+software = $(pdf-flow) $(misc-flow) $(post-flow)
 
 # Actions lists (clone repository, build docker image, run container)
 clone = $(foreach sw,$(software), clone-$(sw))
@@ -10,13 +11,14 @@ build = $(foreach sw,$(software), build-$(sw))
 
 run-pdf-flow = $(foreach sw,$(pdf-flow), run-$(sw))
 run-misc-flow = $(foreach sw,$(misc-flow), run-$(sw))
+run-post-flow = $(foreach sw,$(post-flow), run-$(sw))
 
 .PHONY: all pdf-flow install $(clone) $(build) $(run) clean
 
 
-all: $(run-misc-flow) $(run-pdf-flow)
+all: $(run-pdf-flow) $(run-misc-flow) $(run-post-flow)
 
-pdf-flow: $(run-pdf-flow)
+pdf-flow: $(run-pdf-flow) $(run-post-flow)
 
 install: $(clone) $(build)
 	mkdir -p input output

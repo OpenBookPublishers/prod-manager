@@ -1,5 +1,5 @@
 # Software list
-pdf-flow = chapter-splitter obp-gen-toc
+pdf-flow = chapter-splitter obp-gen-toc archive_urls_pdf
 misc-flow = ace-docker epublius obp-gen-mobi obp-gen-xml obp-extract-cit
 
 software = $(pdf-flow) $(misc-flow)
@@ -14,7 +14,7 @@ run-misc-flow = $(foreach sw,$(misc-flow), run-$(sw))
 .PHONY: all pdf-flow install $(clone) $(build) $(run) clean
 
 
-all: $(run-pdf-flow) $(run-misc-flow)
+all: $(run-misc-flow) $(run-pdf-flow)
 
 pdf-flow: $(run-pdf-flow)
 
@@ -168,6 +168,23 @@ run-ace-docker: ./output/ace-docker
                    -e UID=`id -u` \
                    -e GID=`id -g` \
                    openbookpublishers/ace-docker
+
+# archive_urls_pdf
+clone-archive_urls_pdf:
+	rm -rf ./archive_urls_pdf
+	git clone --depth=1 https://github.com/OpenBookPublishers/archive_urls_pdf.git
+
+build-archive_urls_pdf:
+	docker build `pwd`/archive_urls_pdf/ \
+		     -t openbookpublishers/archive_urls_pdf
+
+run-archive_urls_pdf: ./output/archive_urls_pdf
+
+./output/archive_urls_pdf: ./input/file.pdf
+	mkdir $@
+	docker run --rm \
+		   -v `pwd`/input/file.pdf:/archive_urls_pdf/file.pdf \
+		   openbookpublishers/archive_urls_pdf
 
 
 # Utils

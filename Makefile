@@ -1,9 +1,10 @@
 # Software list
 pdf-flow = chapter-splitter obp-gen-toc
 misc-flow = ace-docker epublius obp-gen-mobi obp-gen-xml obp-extract-cit
+pre-flow = cover-trimmer
 post-flow = archive_urls_pdf
 
-software = $(pdf-flow) $(misc-flow) $(post-flow)
+software = $(pdf-flow) $(misc-flow) $(pre-flow) $(post-flow)
 
 # Actions lists (clone repository, build docker image, run container)
 clone = $(foreach sw,$(software), clone-$(sw))
@@ -11,14 +12,17 @@ build = $(foreach sw,$(software), build-$(sw))
 
 run-pdf-flow = $(foreach sw,$(pdf-flow), run-$(sw))
 run-misc-flow = $(foreach sw,$(misc-flow), run-$(sw))
+run-pre-flow = $(foreach sw,$(pre-flow), run-$(sw))
 run-post-flow = $(foreach sw,$(post-flow), run-$(sw))
 
-.PHONY: all pdf-flow install $(clone) $(build) $(run) clean
+.PHONY: all pdf-flow pre-flow install $(clone) $(build) $(run) clean
 
 
 all: $(run-pdf-flow) $(run-misc-flow) $(run-post-flow)
 
 pdf-flow: $(run-pdf-flow) $(run-post-flow)
+
+pre-flow: $(run-pre-flow)
 
 install: $(clone) $(build)
 	mkdir -p input output
@@ -187,6 +191,25 @@ run-archive_urls_pdf: ./output/archive_urls_pdf
 	docker run --rm \
 		   -v `pwd`/input/file.pdf:/archive_urls_pdf/file.pdf \
 		   openbookpublishers/archive_urls_pdf
+
+# Cover Trimmer
+clone-cover-trimmer:
+	rm -rf ./cover-trimmer
+	git clone --depth=1 https://github.com/OpenBookPublishers/cover-trimmer.git
+
+build-cover-trimmer:
+	docker build `pwd`/cover-trimmer/ \
+		     -t openbookpublishers/cover-trimmer
+
+run-cover-trimmer: ./output/cover-trimmer
+
+./output/cover-trimmer: ./input/cover.pdf
+	mkdir $@
+	docker run --rm \
+		   --user `id -u`:`id -g` \
+		   -v `pwd`/input/cover.pdf:/cover/cover.pdf \
+		   -v `pwd`/output/cover-trimmer:/cover/out \
+		   openbookpublishers/cover-trimmer
 
 
 # Utils
